@@ -1,0 +1,147 @@
+/* --- Genel tipografi ve yerleşim --- */
+:root{
+    --container-width: 1280px;   /* çerçeve genişliği (önceden ~1100) */
+    --base-font: 18px;           /* genel yazı boyutu (önceden ~16)  */
+    --heading: 26px;             /* başlıklar */
+    --small: 14px;               /* küçük yazılar */
+    --radius: 14px;              /* köşe yuvarlaklığı */
+    --pad: 24px;                 /* kart iç dolgusu */
+    --gap: 16px;                 /* aralıklar */
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    margin: 0;
+    background: #f7f7fb;
+    font-size: var(--base-font);
+    line-height: 1.6;
+    color: #111827;
+}
+
+/* --- Üst Menü --- */
+.topnav {
+    background: #111827;
+    color: #fff;
+    padding: 12px 18px;
+    display: flex;
+    gap: 16px;
+}
+.topnav a {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 16px;
+}
+.topnav a:hover { background: #374151; }
+
+/* --- Ana kapsayıcı (çerçeve) --- */
+.container {
+    max-width: var(--container-width);
+    margin: 28px auto;
+    background: #fff;
+    padding: var(--pad);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 24px rgba(0,0,0,.06);
+}
+
+/* --- Başlıklar --- */
+h1 { margin: 0 0 16px; font-size: var(--heading); font-weight: 700; }
+h2 { margin: 12px 0; font-size: 22px; }
+
+/* --- Tablo --- */
+table { width: 100%; border-collapse: collapse; margin: 14px 0; }
+th, td {
+    border-bottom: 1px solid #eee;
+    padding: 12px 14px;            /* önceden 10px */
+    text-align: left;
+    vertical-align: top;
+    font-size: 16px;               /* tablo metni biraz büyütüldü */
+}
+th { color: #374151; font-weight: 600; }
+
+/* --- Butonlar --- */
+.btn {
+    display: inline-block;
+    padding: 10px 14px;            /* önceden 8px 12px */
+    border-radius: 10px;
+    text-decoration: none;
+    background: #111827;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;               /* buton yazısı büyütüldü */
+}
+.btn.secondary { background: #6b7280; }
+.btn.danger { background: #b91c1c; }
+.actions { display: flex; gap: 10px; margin: 10px 0 14px; }
+
+/* --- Formlar --- */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 14px;
+    margin: 14px 0;
+}
+label { font-size: 13px; color: #374151; }
+input, select {
+    width: 100%;
+    padding: 10px 12px;            /* önceden 8px */
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 16px;
+}
+
+/* --- Bilgi metinleri --- */
+.small { font-size: var(--small); color: #6b7280; }
+.flash {
+    background: #ecfccb;
+    border: 1px solid #a3e635;
+    color: #14532d;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+/* --- Kart görünümleri (yolcu yönetimi sayfasında kullanılıyor) --- */
+.card {
+    border: 1px solid #eee;
+    border-radius: var(--radius);
+    padding: 14px;
+    margin: 12px 0;
+}
+
+/* --- Mobil uyarlama --- */
+@media (max-width: 768px) {
+    :root{
+        --container-width: 100%;
+        --base-font: 16.5px;
+        --heading: 22px;
+    }
+    .form-grid { grid-template-columns: 1fr; }
+    .topnav { flex-wrap: wrap; }
+}
+
+a.btn,
+button.btn,
+input[type="submit"].btn {
+    display: inline-block;
+    padding: 10px 14px;      /* yükseklik aynı */
+    border-radius: 10px;
+    text-decoration: none;
+    background: #111827;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;         /* yazı boyutu aynı */
+    line-height: 1.2;        /* satır yüksekliği sabit */
+    vertical-align: middle;
+}
+
+/* varyantlar */
+.btn.secondary { background: #6b7280; }
+.btn.danger    { background: #b91c1c; }
+td.actions { display: flex; gap: 8px; align-items: center; }
