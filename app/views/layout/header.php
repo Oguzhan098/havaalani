@@ -1,12 +1,18 @@
 <?php
+declare(strict_types=1);
 
+// BASE tanımı (eğer yoksa belirle)
 if (!isset($BASE) || !$BASE) {
-
     $BASE = preg_replace('#/app/.*$#', '', $_SERVER['SCRIPT_NAME']);
-    if ($BASE === null || $BASE === '') { $BASE = '/'; }
+    if (empty($BASE)) { $BASE = ''; } // kök dizin
 }
-if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
 
+// Session başlat
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+// Güvenli HTML çıktısı helper
 if (!function_exists('e')) {
     function e($v): string {
         return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF-8');
@@ -23,12 +29,13 @@ if (!function_exists('e')) {
 </head>
 <body>
 <nav class="topnav">
-    <a href="<?= $BASE ?>/app/views/flights/index.php">Uçuşlar</a>
-    <a href="<?= $BASE ?>/app/views/airports/index.php">Havalimanları</a>
-    <a href="<?= $BASE ?>/app/views/planes/index.php">Uçaklar</a>
-    <a href="<?= $BASE ?>/app/views/people/index.php">Kişiler</a>
+    <a href="<?= $BASE ?>/app/controllers/FlightController.php">Uçuşlar</a>
+    <a href="<?= $BASE ?>/app/controllers/AirportController.php">Havalimanları</a>
+    <a href="<?= $BASE ?>/app/controllers/PlaneController.php">Uçaklar</a>
+    <a href="<?= $BASE ?>/app/controllers/PeopleController.php">Kişiler</a>
 </nav>
 <main class="container">
+
     <?php if (!empty($_SESSION['flash'])): ?>
         <div class="flash"><?= e($_SESSION['flash']); unset($_SESSION['flash']); ?></div>
     <?php endif; ?>

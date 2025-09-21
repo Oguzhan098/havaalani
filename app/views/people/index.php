@@ -1,16 +1,9 @@
 <?php
 declare(strict_types=1);
-ini_set('display_errors','1'); error_reporting(E_ALL);
-if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
-
-$BASE = '/ucus_tam_proje';
-
-$pdo = require __DIR__ . '/../../config/database.php';
-
-$people = $pdo->query("SELECT * FROM person ORDER BY id")->fetchAll();
 
 require __DIR__ . '/../layout/header.php';
 ?>
+
 <h1>Kişiler</h1>
 
 <div class="actions">
@@ -21,14 +14,22 @@ require __DIR__ . '/../layout/header.php';
     <p class="small">Kayıt yok.</p>
 <?php else: ?>
     <table>
-        <thead><tr><th>#</th><th>Ad</th><th>Soyad</th><th>Cinsiyet</th><th>Yaş</th></tr></thead>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>Cinsiyet</th>
+            <th>Yaş</th>
+        </tr>
+        </thead>
         <tbody>
         <?php foreach ($people as $pe): ?>
             <tr>
                 <td><?= (int)$pe['id'] ?></td>
-                <td><?= htmlspecialchars($pe['first_name']) ?></td>
-                <td><?= htmlspecialchars($pe['last_name']) ?></td>
-                <td><?= htmlspecialchars($pe['gender']) ?></td>
+                <td><?= e($pe['first_name']) ?></td>
+                <td><?= e($pe['last_name']) ?></td>
+                <td><?= e($pe['gender']) ?></td>
                 <td><?= (int)$pe['age'] ?></td>
             </tr>
         <?php endforeach; ?>

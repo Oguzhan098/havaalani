@@ -1,54 +1,28 @@
 <?php
 declare(strict_types=1);
-ini_set('display_errors','1'); error_reporting(E_ALL);
-if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
 
-$pdo = require __DIR__ . '/../../config/database.php';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $pdo->beginTransaction();
-        $stmt = $pdo->prepare("INSERT INTO flights (departure_airport_id,arrival_airport_id,plane_id,departure_ts,arrival_ts)
-                               VALUES (:dep,:arr,:plane,:dts,:ats) RETURNING id");
-        $stmt->execute([
-            ':dep'   => (int)$_POST['departure_airport_id'],
-            ':arr'   => (int)$_POST['arrival_airport_id'],
-            ':plane' => (int)$_POST['plane_id'],
-            ':dts'   => (string)$_POST['departure_ts'],
-            ':ats'   => (string)$_POST['arrival_ts'],
-        ]);
-        $fid = (int)$stmt->fetchColumn();
-
-        if (!empty($_POST['passenger_ids']) && is_array($_POST['passenger_ids'])) {
-            $ins = $pdo->prepare("INSERT INTO flight_person (flight_id, person_id) VALUES (:f,:p)");
-            foreach ($_POST['passenger_ids'] as $pid) {
-                $ins->execute([':f'=>$fid, ':p'=>(int)$pid]);
-            }
-        }
-        $pdo->commit();
-        $_SESSION['flash'] = 'Uçuş eklendi.';
-        header("Location: " . dirname($_SERVER['SCRIPT_NAME']) . "/index.php");
-        exit;
-    } catch (Throwable $e) {
-        $pdo->rollBack();
-        $_SESSION['flash'] = 'Hata: ' . $e->getMessage();
-    }
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
 }
 
-/** Listeler */
-$airports = $pdo->query("SELECT id, name FROM airport ORDER BY name")->fetchAll();
-/* BRAND + MODEL birlikte almak için sorguyu güncelledik */
-$planes   = $pdo->query("SELECT id, brand, model FROM plane ORDER BY id")->fetchAll();
-$people   = $pdo->query("SELECT id, first_name, last_name FROM person ORDER BY id")->fetchAll();
-
-/** e() helper’ı header’da tanımlı olacak; garanti için fallback: */
-if (!function_exists('e')) { function e($v): string { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF-8'); } }
-
+$BASE = '/ucus_tam_proje';
 require __DIR__ . '/../layout/header.php';
+
+if (!function_exists('e')) {
+    function e($v): string { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF-8'); }
+}
 ?>
+
 <h1>Yeni Uçuş</h1>
 
-<form method="post" action="<?= $_SERVER['SCRIPT_NAME'] ?>" class="form-grid">
+<?php if (!empty($_SESSION['flash'])): ?>
+    <p class="flash"><?= e($_SESSION['flash']) ?></p>
+    <?php unset($_SESSION['flash']); ?>
+<?php endif; ?>
+
+<form method="post" action="<?= $BASE ?>/app/controllers/FlightController.php" class="form-grid">
+    <input type="hidden" name="action" value="create">
+
     <div>
         <label>Kalkış Havalimanı</label>
         <select name="departure_airport_id" required>
@@ -84,11 +58,7 @@ require __DIR__ . '/../layout/header.php';
         <select name="plane_id" required>
             <option value="">Seçin</option>
             <?php foreach ($planes as $p): ?>
-                <?php
-                $brand = $p['brand'] ?? '';
-                $model = $p['model'] ?? '';
-                $label = ($brand && $model) ? ($brand . ' — ' . $model) : ($brand ?: $model);
-                ?>
+                <?php $label = trim(($p['brand'] ?? '') . ' — ' . ($p['model'] ?? '')); ?>
                 <option value="<?= (int)$p['id'] ?>"><?= e($label) ?></option>
             <?php endforeach; ?>
         </select>
@@ -105,7 +75,7 @@ require __DIR__ . '/../layout/header.php';
 
     <div style="grid-column:1/-1; display:flex; gap:8px;">
         <button class="btn" type="submit">Kaydet</button>
-        <a class="btn secondary" href="<?= dirname($_SERVER['SCRIPT_NAME']) . '/index.php' ?>">İptal</a>
+        <a class="btn secondary" href="<?= $BASE ?>/app/views/flights/index.php">İptal</a>
     </div>
 </form>
 
